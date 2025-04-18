@@ -49,6 +49,28 @@ const useAuth = () => {
         });
     };
 
+    const handleRegister = async (data: TUser) => {
+        try {
+            await sendApiRequest.post("/auth/register", data);
+
+            Toast.show({
+                type: "success",
+                text1: "Registration successful",
+                text2: "Welcome aboard!",
+            });
+
+            navigate("Login");
+        } catch (error) {
+            console.error("Registration error:", error);
+
+            Toast.show({
+                type: "error",
+                text1: "Registration failed",
+                text2: "Please try again.",
+            });
+        }
+    };
+
     const getUser = async (token: string) => {
         try {
             if (token) {
@@ -74,6 +96,7 @@ const useAuth = () => {
         user,
         handleLogout,
         handleLogin,
+        handleRegister,
     }
 };
 

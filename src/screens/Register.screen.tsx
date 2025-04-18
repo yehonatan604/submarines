@@ -5,59 +5,23 @@ import useAuth from "../hooks/useAuth";
 import { TUser } from "../types/TUser";
 
 const RegisterScreen = () => {
-  const { handleLogin } = useAuth();
-  const [formData, setFormData] = useState<Partial<TUser & Record<string, any>>>({
+  const { handleRegister } = useAuth();
+  const [formData, setFormData] = useState<TUser>({
     email: "",
     password: "",
-    name: {
-      first: "",
-      middle: "",
-      last: "",
-    },
-    phone: "",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      country: "",
-      zip: "",
-    },
+    name: "",
   });
-  const [errors, setErrors] = useState<Partial<TUser>>({
+  const [errors, setErrors] = useState<TUser>({
     email: "",
     password: "",
-    name: {
-      first: "",
-      middle: "",
-      last: "",
-    },
-    phone: "",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      country: "",
-      zip: "",
-    },
+    name: "",
   });
 
   const validateForm = useCallback(() => {
-    const errors: Partial<TUser> = {
+    const errors: TUser = {
       email: "",
       password: "",
-      name: {
-        first: "",
-        middle: "",
-        last: "",
-      },
-      phone: "",
-      address: {
-        street: "",
-        city: "",
-        state: "",
-        country: "",
-        zip: "",
-      },
+      name: "",
     };
 
     if (!REGEX_EMAIL.test(formData.email ?? "")) {
@@ -73,87 +37,41 @@ const RegisterScreen = () => {
       errors.password = "";
     }
 
-    if (!formData.name?.first) {
-      errors.name = errors.name || { first: "", middle: "", last: "" };
-      errors.name.first = "First name is required";
-    }
-    if (!formData.name?.last) {
-      errors.name = errors.name || { first: "", middle: "", last: "" };
-      errors.name.last = "Last name is required";
-    }
-
-    if (!formData.address?.street) {
-      errors.address = errors.address || {
-        street: "",
-        city: "",
-        state: "",
-        country: "",
-        zip: "",
-      };
-      errors.address.street = "Street address is required";
-    }
-
-    if (!formData.address?.city) {
-      errors.address = errors.address || {
-        street: "",
-        city: "",
-        state: "",
-        country: "",
-        zip: "",
-      };
-      errors.address.city = "City is required";
-    }
-
-    if (!formData.address?.state) {
-      errors.address = errors.address || {
-        street: "",
-        city: "",
-        state: "",
-        country: "",
-        zip: "",
-      };
-      errors.address.state = "State is required";
-    }
-    if (!formData.address?.country) {
-      errors.address = errors.address || {
-        street: "",
-        city: "",
-        state: "",
-        country: "",
-        zip: "",
-      };
-      errors.address.country = "Country is required";
+    if (!formData.name) {
+      errors.name = "Name is required";
     }
 
     setErrors(errors);
-    return (
-      errors.email === "" &&
-      errors.password === "" &&
-      errors.name?.first === "" &&
-      errors.name?.last === "" &&
-      errors.address?.street === "" &&
-      errors.address?.city === "" &&
-      errors.address?.state === "" &&
-      errors.address?.country === ""
-    );
+    return errors.email === "" && errors.password === "" && errors.name === "";
   }, [formData]);
 
   const handleInputChange = (name: string, value: string) => {
-    if (name.includes(".")) {
-      const [parent, child] = name.split(".");
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: { ...(prev[parent] as Record<string, any>), [child]: value },
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateForm();
   };
 
   const isValid = useMemo(() => validateForm(), [validateForm]);
 
+  <View style={styles.formControl}>
+    <TextInput
+      style={errors.name ? [styles.input, styles.errorInput] : styles.input}
+      placeholder="Name"
+      onChange={(e) => handleInputChange("name", e.nativeEvent.text)}
+    />
+    <Text style={styles.errorText}>{errors.name}</Text>
+  </View>;
+
   return (
     <View style={styles.container}>
+      <View style={styles.formControl}>
+        <TextInput
+          style={errors.name ? [styles.input, styles.errorInput] : styles.input}
+          placeholder="Name"
+          onChange={(e) => handleInputChange("name", e.nativeEvent.text)}
+        />
+        <Text style={styles.errorText}>{errors.name}</Text>
+      </View>
+
       <View style={styles.formControl}>
         <TextInput
           style={errors.email ? [styles.input, styles.errorInput] : styles.input}
@@ -174,136 +92,29 @@ const RegisterScreen = () => {
         <Text style={styles.errorText}>{errors.password}</Text>
       </View>
 
-      <View style={styles.formControl}>
-        <TextInput
-          style={errors.name?.first ? [styles.input, styles.errorInput] : styles.input}
-          placeholder="First Name"
-          onChange={(e) => handleInputChange("name.first", e.nativeEvent.text)}
+      <View style={styles.buttonsContainer}>
+        <Button
+          disabled={!isValid}
+          title="Send"
+          onPress={async () => await handleRegister(formData)}
         />
-        <Text style={styles.errorText}>{errors.name?.first}</Text>
-      </View>
 
-      <View style={styles.formControl}>
-        <TextInput
-          style={errors.name?.last ? [styles.input, styles.errorInput] : styles.input}
-          placeholder="Last Name"
-          onChange={(e) => handleInputChange("name.last", e.nativeEvent.text)}
+        <Button
+          title="Reset"
+          onPress={() => {
+            setFormData({
+              email: "",
+              password: "",
+              name: "",
+            });
+            setErrors({
+              email: "",
+              password: "",
+              name: "",
+            });
+          }}
         />
-        <Text style={styles.errorText}>{errors.name?.last}</Text>
       </View>
-
-      <View style={styles.formControl}>
-        <TextInput
-          style={errors.name?.middle ? [styles.input, styles.errorInput] : styles.input}
-          placeholder="Middle Name"
-          onChange={(e) => handleInputChange("middle.first", e.nativeEvent.text)}
-        />
-        <Text style={styles.errorText}>{errors.name?.middle}</Text>
-      </View>
-
-      <View style={styles.formControl}>
-        <TextInput
-          style={errors.phone ? [styles.input, styles.errorInput] : styles.input}
-          placeholder="Phone Number"
-          onChange={(e) => handleInputChange("phone", e.nativeEvent.text)}
-        />
-        <Text style={styles.errorText}>{errors.phone}</Text>
-      </View>
-
-      <View style={styles.formControl}>
-        <TextInput
-          style={
-            errors.address?.street ? [styles.input, styles.errorInput] : styles.input
-          }
-          placeholder="Street Address"
-          onChange={(e) => handleInputChange("address.street", e.nativeEvent.text)}
-        />
-        <Text style={styles.errorText}>{errors.address?.street}</Text>
-      </View>
-
-      <View style={styles.formControl}>
-        <TextInput
-          style={errors.address?.city ? [styles.input, styles.errorInput] : styles.input}
-          placeholder="City"
-          onChange={(e) => handleInputChange("address.city", e.nativeEvent.text)}
-        />
-        <Text style={styles.errorText}>{errors.address?.city}</Text>
-      </View>
-
-      <View style={styles.formControl}>
-        <TextInput
-          style={errors.address?.state ? [styles.input, styles.errorInput] : styles.input}
-          placeholder="State"
-          onChange={(e) => handleInputChange("address.state", e.nativeEvent.text)}
-        />
-        <Text style={styles.errorText}>{errors.address?.state}</Text>
-      </View>
-
-      <View style={styles.formControl}>
-        <TextInput
-          style={
-            errors.address?.country ? [styles.input, styles.errorInput] : styles.input
-          }
-          placeholder="Country"
-          onChange={(e) => handleInputChange("address.country", e.nativeEvent.text)}
-        />
-        <Text style={styles.errorText}>{errors.address?.country}</Text>
-      </View>
-
-      <View style={styles.formControl}>
-        <TextInput
-          style={errors.address?.zip ? [styles.input, styles.errorInput] : styles.input}
-          placeholder="Zip Code"
-          onChange={(e) => handleInputChange("address.zip", e.nativeEvent.text)}
-        />
-        <Text style={styles.errorText}>{errors.address?.zip}</Text>
-      </View>
-
-      <Button
-        disabled={!isValid}
-        title="Send"
-        onPress={async () => await handleLogin(formData)}
-      />
-
-      <Button
-        title="Reset"
-        onPress={() => {
-          setFormData({
-            email: "",
-            password: "",
-            name: {
-              first: "",
-              middle: "",
-              last: "",
-            },
-            phone: "",
-            address: {
-              street: "",
-              city: "",
-              state: "",
-              country: "",
-              zip: "",
-            },
-          });
-          setErrors({
-            email: "",
-            password: "",
-            name: {
-              first: "",
-              middle: "",
-              last: "",
-            },
-            phone: "",
-            address: {
-              street: "",
-              city: "",
-              state: "",
-              country: "",
-              zip: "",
-            },
-          });
-        }}
-      />
     </View>
   );
 };
@@ -315,7 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     gap: 10,
-    paddingTop: "5%",
+    paddingTop: "25%",
   },
   input: {
     width: "100%",
@@ -328,6 +139,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#007BFF",
     padding: 10,
     borderRadius: 5,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: 20,
+    marginTop: 10,
   },
   errorInput: {
     borderColor: "red",
