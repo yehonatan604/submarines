@@ -1,0 +1,15 @@
+{
+    "open": [
+        [
+            {
+                "name": "dev",
+                "path": ".",
+                "command": "npx expo start"
+            }
+        ]
+    ],
+    "close": [
+        "killall",
+        "closeall"
+    ]
+}
