@@ -3,7 +3,7 @@ import { TUser } from "../types/TUser";
 
 type TAuthContext = {
     user: TUser | null;
-    login: (user: TUser, token: string) => void;
+    login: (user: TUser) => void;
     logout: () => void;
 };
 

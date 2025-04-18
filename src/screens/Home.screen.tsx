@@ -1,10 +1,20 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Button, View } from "react-native";
+import { Button, Text, View } from "react-native";
+import useAuth from "../hooks/useAuth";
+import { TUser } from "../types/TUser";
 
 const HomeScreen = ({ navigation }: { navigation: StackNavigationProp<any, any> }) => {
+  const { user, handleLogout } = useAuth();
+
   return (
     <View>
-      <Button title="Login" onPress={() => navigation.navigate("Login")} />
+      <View style={{ flexDirection: "column", gap: 10 }}>
+        <Text>Welcome {user ? (user as TUser).name.first : "Guest"}</Text>
+        <Button
+          title={user ? "Logout" : "Login"}
+          onPress={user ? () => handleLogout() : () => navigation.navigate("Login")}
+        />
+      </View>
     </View>
   );
 };
