@@ -1,7 +1,12 @@
+import AuthProvider from "./src/context/providers/Auth.provider";
 import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
-  return <AppNavigator />;
+  return (
+    <AuthProvider>
+      <AppNavigator />
+    </AuthProvider>
+  );
 }
 
 // const styles = StyleSheet.create({
