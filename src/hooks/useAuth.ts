@@ -51,7 +51,7 @@ const useAuth = () => {
 
     const handleRegister = async (data: TUser) => {
         try {
-            await sendApiRequest.post("/auth/register", data);
+            await sendApiRequest.post("/auth", data);
 
             Toast.show({
                 type: "success",

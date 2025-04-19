@@ -6,14 +6,13 @@ const apiClient = axios.create({
     baseURL: Constants?.expoConfig?.extra?.apiUrl
 });
 
-apiClient.interceptors.request.use(
-    async (config) => {
-        const token = await getToken();
-        if (token) {
-            config.headers['auth-token'] = token;
-        }
-        return config;
-    },
+apiClient.interceptors.request.use(async (config) => {
+    const token = await getToken();
+    if (token) {
+        config.headers['auth-token'] = token;
+    }
+    return config;
+},
     (error) => {
         return Promise.reject(error);
     }
