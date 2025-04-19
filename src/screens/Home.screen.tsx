@@ -15,6 +15,7 @@ const HomeScreen = ({ navigation }: { navigation: StackNavigationProp<any, any> 
           onPress={user ? () => handleLogout() : () => navigation.navigate("Login")}
         />
         <Button title="Register" onPress={() => navigation.navigate("Register")} />
+        {user && <Button title="Lobby" onPress={() => navigation.navigate("Lobby")} />}
       </View>
     </View>
   );

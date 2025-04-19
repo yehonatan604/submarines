@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { TUser } from "../../types/TUser";
-import AuthContext from "../Auth.context";
+import AuthContext from "../auth.context";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<TUser | null>(null);

@@ -1,7 +1,7 @@
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
-import authContext from "../context/Auth.context";
+import authContext from "../context/auth.context";
 import { sendApiRequest } from "../helpers/axios.helper";
 import { deleteToken, getToken, saveToken } from "../helpers/storage.helper";
 import { TRootStackParamList } from "../types/TRootStackParamList";
@@ -17,6 +17,7 @@ const useAuth = () => {
             const token = res.data;
 
             await saveToken(token);
+
             const user = await getUser(token);
             login(user);
 
@@ -84,13 +85,19 @@ const useAuth = () => {
     }
 
     useEffect(() => {
+        if (user) return;
         (async () => {
             const token = await getToken();
             if (token) {
-                await getUser(token!);
+                const tokenUser = await getUser(token!);
+                if (tokenUser) {
+                    login(tokenUser);
+                } else {
+                    deleteToken();
+                }
             }
         })();
-    }, []);
+    }, [user]);
 
     return {
         user,
