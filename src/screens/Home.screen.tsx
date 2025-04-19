@@ -16,6 +16,9 @@ const HomeScreen = ({ navigation }: { navigation: StackNavigationProp<any, any> 
         />
         <Button title="Register" onPress={() => navigation.navigate("Register")} />
         {user && <Button title="Lobby" onPress={() => navigation.navigate("Lobby")} />}
+        {user && (
+          <Button title="Quick Game" onPress={() => navigation.navigate("QuickGame")} />
+        )}
       </View>
     </View>
   );
@@ -33,6 +36,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#fff",
   },
   buttonsContainer: {
     display: "flex",
