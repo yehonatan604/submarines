@@ -14,7 +14,7 @@ const useAuth = () => {
     const handleLogin = async (data: Partial<TUser>) => {
         try {
             const res = await sendApiRequest.post("/auth/login", data);
-            const { token } = res.data;
+            const token = res.data;
 
             await saveToken(token);
             const user = await getUser(token);
