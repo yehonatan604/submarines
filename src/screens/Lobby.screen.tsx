@@ -1,30 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import useSocket from "../hooks/useSocket";
 
-// Mocked users
-const mockPlayers = [
-  { id: "1", name: "Captain Nemo" },
-  { id: "2", name: "AquaHunter" },
-  { id: "3", name: "SeaDog42" },
-  { id: "4", name: "KrakenRider" },
-  { id: "5", name: "TorpedoTom" },
-];
-
 const LobbyScreen = () => {
-  const [players, setPlayers] = useState(mockPlayers);
-  const { connected } = useSocket();
+  const { connected, joinLobby, players, user } = useSocket();
 
-  console.log("Socket connected:", connected);
-
-  const handleInvite = (playerName: string) => {
-    // Here you'd emit a socket event
+  const handleInvite = (playerId: string) => {
     Toast.show({
       type: "success",
-      text1: `Invite sent to ${playerName}`,
+      text1: `Invite sent to ${playerId}`,
     });
   };
+
+  useEffect(() => {
+    if (connected) {
+      joinLobby();
+    }
+  }, [connected]);
 
   return (
     <View style={styles.container}>
@@ -32,17 +25,25 @@ const LobbyScreen = () => {
 
       <FlatList
         data={players}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item}
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
-          <View style={styles.playerRow}>
+          <View
+            key={item._id}
+            style={[
+              styles.playerRow,
+              user?._id !== item._id && { backgroundColor: "#334155" },
+            ]}
+          >
             <Text style={styles.playerName}>{item.name}</Text>
-            <TouchableOpacity
-              style={styles.inviteButton}
-              onPress={() => handleInvite(item.name)}
-            >
-              <Text style={styles.inviteButtonText}>Invite</Text>
-            </TouchableOpacity>
+            {user?._id !== item._id && (
+              <TouchableOpacity
+                style={styles.inviteButton}
+                onPress={() => handleInvite(item._id)}
+              >
+                <Text style={styles.inviteButtonText}>Invite</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       />
@@ -84,6 +85,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
+  },
+  disabled: {
+    backgroundColor: "#64748b",
   },
   inviteButtonText: {
     color: "#fff",
